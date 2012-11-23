@@ -8,12 +8,18 @@ import java.util.*;
 import javax.swing.*;
 import java.awt.color.*;
 
-public class MainWindow extends JPanel implements Runnable, KeyListener, MouseListener {
+public class MainWindow extends JPanel implements KeyListener, MouseListener, Runnable  {
+	
+	private static final long serialVersionUID = 1L;
+
+	public enum State {
+		START, EXPERIMENT
+	}
 	
 	BufferedImage buffer;
 	static int width;
 	static int height;
-	int states;
+	State s;
 	
 	public static void main(String[] args) {
 		MainWindow w = new MainWindow();
@@ -27,6 +33,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 		width = screenSize.width;
 		height = screenSize.height;
 		
+		frame.setFocusable(true);
 		
 		frame.add(w);
 		
@@ -38,14 +45,14 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 	
 	public MainWindow() {
 		this.setBackground(Color.black);
+		addKeyListener(this);
+		addMouseListener(this);
 	}
 	
-	public void run(){
-
-	}
+	public void run(){}
 	
 	void mainLoop() {
-		states = 0;
+		s = State.START;
 		while (true)
 			draw();
 	}
@@ -54,11 +61,11 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 		buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		Graphics2D b = buffer.createGraphics();
 		Graphics2D g = (Graphics2D) this.getGraphics();
-		switch (states) {
-			case 0:
+		switch (s) {
+			case START:
 			b = drawStartScreen(b);
 			break;
-			case 1:
+			case EXPERIMENT:
 			b = drawExperiment(b);
 			break;
 		}
@@ -89,56 +96,35 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 		return (int) ((width-rect.getWidth())/2);
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
 		//if key is SPACE key, then go to experiment
-		System.out.println(e.getKeyCode());
-		/*if (states==0)
-			e.getKeyCode()*/
+		System.out.println("here2");
+		if (s==State.START && e.getKeyCode()==KeyEvent.VK_SPACE)
+			s=State.EXPERIMENT;
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void keyReleased(KeyEvent e) {}
 
+	@Override
+	public void mouseClicked(MouseEvent e) {}
+
+	@Override
+	public void mousePressed(MouseEvent e) {}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
+
+	@Override
+	public void keyTyped(KeyEvent e) {}
 	
 }
