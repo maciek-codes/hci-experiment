@@ -79,6 +79,10 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 		return b;
 	}
 	
+	Graphics2D drawExperiment(Graphics2D b) {
+		return b;
+	}
+	
 	int centreAlignString(String s, Graphics2D g) {
 		FontMetrics f = g.getFontMetrics();
 		Rectangle2D rect = f.getStringBounds(s, g);
@@ -125,8 +129,9 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
 		//if key is SPACE key, then go to experiment
-		if (states==0)
-		
+		System.out.println(e.getKeyCode());
+		/*if (states==0)
+			e.getKeyCode()*/
 	}
 
 	@Override
