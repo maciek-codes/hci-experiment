@@ -11,6 +11,8 @@ import java.awt.color.*;
 
 public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMotionListener {
 	
+	private static final long serialVersionUID = 1L;
+	
 	BufferedImage buffer;
 	static int width;
 	static int height;
@@ -35,8 +37,15 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 		width = screenSize.width;
 		height = screenSize.height;
 		
+		frame.setFocusable(true);
 		
 		frame.add(w);
+		
+		Logging logger = Logging.GetLogger();
+		
+		logger.Log(1, 22, new Date(), new Date(), 'M', 21, new Resolution("1000x2000"), 10, 2, 1.5, 1.5);
+		
+		logger.Close();
 		
 		//frame.pack();
 		frame.setVisible(true);
@@ -50,12 +59,9 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 		f.addMouseMotionListener(this);
 	}
 	
-	public void run(){
-
-	}
+	public void run(){}
 	
 	void mainLoop() {
-		states = 0;
 		while (true)
 			draw();
 	}
@@ -64,6 +70,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 		buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		Graphics2D b = buffer.createGraphics();
 		Graphics2D g = (Graphics2D) this.getGraphics();
+<<<<<<< HEAD
 		switch (states) {
 			case 0:
 				b = drawLaunchScreen(b);
@@ -119,9 +126,6 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 	}
 
 	@Override
-	public void keyTyped(KeyEvent e) {}
-
-	@Override
 	public void keyPressed(KeyEvent e) {
 		//if key is SPACE key, then go to experiment
 		if (states==0 && e.getKeyCode()==KeyEvent.VK_SPACE) {
@@ -147,9 +151,27 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 	}
 
 	@Override
+	public void mouseDragged(MouseEvent e) {}
+
+	@Override
 	public void keyReleased(KeyEvent e) {}
 
 	@Override
-	public void mouseDragged(MouseEvent e) {}
+	public void mouseClicked(MouseEvent e) {}
+
+	@Override
+	public void mousePressed(MouseEvent e) {}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
+
+	@Override
+	public void keyTyped(KeyEvent e) {}
 	
 }
