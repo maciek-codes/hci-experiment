@@ -2,22 +2,30 @@ package org.hci;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import javax.swing.*;
 import java.awt.color.*;
 
-public class MainWindow extends JPanel implements Runnable, KeyListener, MouseListener {
+public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMotionListener {
 	
 	BufferedImage buffer;
 	static int width;
 	static int height;
+	
+	Shape start_circle;
+	
 	int states;
+	/* 0 = launch screen
+	 * 1 = start screen
+	 * 2 = in-test screen
+	 */
 	
 	public static void main(String[] args) {
-		MainWindow w = new MainWindow();
 		JFrame frame = new JFrame("HCI - Group Floor 2pi");
+		MainWindow w = new MainWindow(frame);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//frame.setUndecorated(true); //removes top bar with close buttons
 		frame.setLocationByPlatform(true);
@@ -36,8 +44,10 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 		w.mainLoop();
 	}
 	
-	public MainWindow() {
+	public MainWindow(JFrame f) {
 		this.setBackground(Color.black);
+		f.addKeyListener(this);
+		f.addMouseMotionListener(this);
 	}
 	
 	public void run(){
@@ -56,11 +66,14 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 		Graphics2D g = (Graphics2D) this.getGraphics();
 		switch (states) {
 			case 0:
-			b = drawStartScreen(b);
-			break;
+				b = drawLaunchScreen(b);
+				break;
 			case 1:
-			b = drawExperiment(b);
-			break;
+				b = drawStartScreen(b);
+				break;
+			case 2:
+				b = drawExperiment(b);
+				break;
 		}
 		g.drawImage(buffer, 0, 0, this);
 		Toolkit.getDefaultToolkit().sync();
@@ -68,7 +81,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 		g.dispose();
 	}
 	
-	Graphics2D drawStartScreen(Graphics2D b) {
+	Graphics2D drawLaunchScreen(Graphics2D b) {
 		b.setColor(Color.WHITE);
 		b.setFont(new Font(Font.SERIF, Font.PLAIN, 72));
 		b.drawString("Instructions", centreAlignString("Instructions", b), 100);
@@ -76,6 +89,22 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 		b.drawString("to the center circle to start.", centreAlignString("to the center circle to start.", b), 400);
 		b.setFont(new Font(Font.SERIF, Font.PLAIN, 60));
 		b.drawString("Press space key to begin.", centreAlignString("Press space key to begin.", b), 600);
+		return b;
+	}
+	
+	Graphics2D drawStartScreen(Graphics2D b) {
+		String txt;
+		b.setColor(Color.WHITE);
+		b.fillRect(0, 150, width, 15);
+		//TODO get shape colour and type function calls
+		//txt = "Click "+shapeColour+" "+shapeType;
+		txt = "Click "+"red"+" "+"square";
+		b.setFont(new Font(Font.SERIF, Font.PLAIN, 72));
+		b.drawString(txt, centreAlignString(txt, b), 100);
+		//draw circle in centre of screen
+		int radius=50;
+		start_circle = new Ellipse2D.Double((width/2)-(radius/2), (height/2)-(radius/2), radius, radius);
+		b.fill(start_circle);
 		return b;
 	}
 	
@@ -90,55 +119,37 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void keyTyped(KeyEvent e) {}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
 		//if key is SPACE key, then go to experiment
-		System.out.println(e.getKeyCode());
-		/*if (states==0)
-			e.getKeyCode()*/
+		if (states==0 && e.getKeyCode()==KeyEvent.VK_SPACE) {
+			System.out.println("Spacebar pressed");
+			states = 1;
+		}
+			
+	}
+	
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		int x=0, y=0;
+		try {
+			x=e.getX();
+			y=e.getY();
+		} catch (NullPointerException n) {}
+			
+		//check if mouse is in the centre start circle
+		if (states==1 && start_circle.contains(x, y-20)) {
+			System.out.println("Mouse in circle... ready to start.");
+			states = 2;
+		}
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void keyReleased(KeyEvent e) {}
 
+	@Override
+	public void mouseDragged(MouseEvent e) {}
 	
 }
