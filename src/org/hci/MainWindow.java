@@ -37,6 +37,12 @@ public class MainWindow extends JPanel implements KeyListener, MouseListener, Ru
 		
 		frame.add(w);
 		
+		Logging logger = Logging.GetLogger();
+		
+		logger.Log(1, 22, new Date(), new Date(), 'M', 21, new Resolution("1000x2000"), 10, 2, 1.5, 1.5);
+		
+		logger.Close();
+		
 		//frame.pack();
 		frame.setVisible(true);
 		SwingUtilities.invokeLater(w);
