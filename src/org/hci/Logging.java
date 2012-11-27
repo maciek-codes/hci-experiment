@@ -1,10 +1,15 @@
 package org.hci;
 
 import java.util.Date;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.Console;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 //class for saving data from the program in the correct format
 public class Logging {
@@ -22,6 +27,14 @@ public class Logging {
 	// File handle
 	FileWriter fstream;
 	BufferedWriter out;
+	
+	int userId;
+
+	private char gender;
+
+	private int age;
+
+	private Resolution screenRes;
 	
 	// Private constructor prevents others from initialising
 	private Logging() {
@@ -44,6 +57,8 @@ public class Logging {
 		header[10] = "time_visual";
 		header[11] = "time_pointing";
 		
+		// Check user id
+		userId = checkUserId();
 	
 		try {
 			 boolean exists = false;
@@ -89,14 +104,13 @@ public class Logging {
 	}
 	
 	//key,user_id,test_id,datetime_start,datetime_finish,gender,age,resolution,no_objects,object_velocity,time_visual,time_pointing
-	public void Log(int userId, int testId, Date start, Date finish, char gender, int age, 
-			Resolution res, int noObjects, int velocity, double timeVisual, double timePointing ) {
+	public void Log(int testId, Date start, Date finish, int noObjects, int velocity, double timeVisual, double timePointing) {
 		
 		
 		// Get date now and use it as a key
 		Date dateNow = new Date();
 		long key = dateNow.getTime();
-		
+
 		String[] values = new String[noOfFields];
 		
 		values[0] = String.valueOf(key);
@@ -106,7 +120,7 @@ public class Logging {
 		values[4] = finish.toString();
 		values[5] = String.valueOf(gender);
 		values[6] = String.valueOf(age);
-		values[7] = res.toString();
+		values[7] = screenRes.toString();
 		values[8] = String.valueOf(noObjects);
 		values[9] = String.valueOf(velocity);
 		values[10] = String.valueOf(timeVisual);
@@ -120,6 +134,47 @@ public class Logging {
 		}
 	}
 	
+	private int checkUserId() {
+		int userId = 0;
+		try {
+			File file = new File(fileName);
+			if(file.exists()) {
+				FileInputStream fis = new FileInputStream(file);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+				
+				String line = null, tmp;
+				if(reader != null) {
+					
+					while((tmp = reader.readLine()) != null) {
+						line = tmp;
+					}
+					
+				}
+				
+				if(line == null) {
+					userId = 0;
+				}
+				
+				String[] fields = line.split(",");
+				
+				try {
+					int currentUser = Integer.parseInt(fields[1]);
+					userId = currentUser + 1;
+				} catch(Exception ex) {
+					userId = 0;
+				}
+				
+				fis.close();
+				
+			}
+		} catch(IOException e) {
+			System.out.println("Error in logger: " + e.getMessage());
+			return 0;
+		}
+		
+		return userId;
+	}
+
 	public void Close() {
 		try {
 		
@@ -133,6 +188,13 @@ public class Logging {
 		{
 			  System.err.println("Error: " + e.getMessage());
 		}
+	}
+
+	public void SetEnvironment(char c, int i, Resolution resolution) {
+		this.gender = c;
+		this.age = i;
+		this.screenRes = resolution;
+		
 	}
 
 }

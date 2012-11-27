@@ -24,6 +24,8 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 	Square stationary;
 	
 	Shapes[] shapeArray;
+
+	static Logging logger;
 	
 	int states;
 	/* 0 = launch screen
@@ -35,6 +37,8 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 	boolean firstMouseMove = false;
 	
 	public static void main(String[] args) {
+		
+		logger = Logging.GetLogger();
 		JFrame frame = new JFrame("HCI - Group Floor 2pi");
 		MainWindow w;
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -54,12 +58,9 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 		
 		frame.add(w);
 		
-		Logging logger = Logging.GetLogger();
+		logger.SetEnvironment('M', 21, new Resolution(screenSize.width, screenSize.height));
 		
-		logger.Log(1, 22, new Date(), new Date(), 'M', 21, new Resolution(screenSize.width, screenSize.height), 10, 2, 1.5, 1.5);
-		
-		logger.Close();
-		
+			
 		//frame.pack();
 		frame.setVisible(true);
 		SwingUtilities.invokeLater(w);
@@ -98,6 +99,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 				break;
 			case 3:
 				b = drawEndScreen(b);
+				logger.Close();
 				break;
 		}
 		g.drawImage(buffer, 0, 0, this);
@@ -233,6 +235,8 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 				testNo++;
 				if (testNo > numTests)
 					states = 3;
+				
+				logger.Log(testNo-1, new Date(), new Date(), 10, 2, 1.5, 1.5);
 			}
 		} catch (NullPointerException n) {}
 	}
