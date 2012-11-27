@@ -27,6 +27,8 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 
 	static Logging logger;
 	
+	JFrame frame;
+
 	int states;
 	/* 0 = launch screen
 	 * 1 = start screen
@@ -36,47 +38,82 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 	public static void main(String[] args) {
 		
 		logger = Logging.GetLogger();
-		JFrame frame = new JFrame("HCI - Group Floor 2pi");
+		JFrame f = new JFrame("HCI - Group Floor 2pi");
 		MainWindow w;
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//frame.setUndecorated(true); //removes top bar with close buttons
-		frame.setLocationByPlatform(true);
-		frame.setResizable(false);
+		f.setLocationByPlatform(true);
+		f.setResizable(false);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		frame.setSize(screenSize);
+		f.setSize(screenSize);
 		width = screenSize.width;
 		height = screenSize.height;
 		
 		//create shapes
 		
-		w = new MainWindow(frame);
+		w = new MainWindow(f);
 		
-		frame.setFocusable(true);
+		f.setFocusable(true);
 		
-		frame.add(w);
+		f.add(w);
 		
 		logger.SetEnvironment('M', 21, new Resolution(screenSize.width, screenSize.height));
 		
 			
 		//frame.pack();
-		frame.setVisible(true);
+		f.setVisible(true);
 		SwingUtilities.invokeLater(w);
 		w.mainLoop();
 	}
 	
 	public MainWindow(JFrame f) {
+		this.frame = f;
 		this.setBackground(Color.black);
-		f.addKeyListener(this);
-		f.addMouseMotionListener(this);
-
-		f.addMouseMotionListener(stationary);
+		this.frame.addKeyListener(this);
+		this.frame.addMouseMotionListener(this);
+		this.frame.addMouseMotionListener(stationary);
 	}
 	
 	public void run(){}
 	
 	void mainLoop() {
-		while (true)
-			draw();
+		
+		if(setUp()) {
+			while (true)
+				draw();
+		}
+	}
+	
+	boolean setUp() {
+		
+		Object[] possibilities = {"Female", "Male"};
+		
+		String gender = (String)JOptionPane.showInputDialog(
+                frame,
+                "Choose your gender:\n",
+                "Gender",
+                JOptionPane.OK_OPTION,
+                null,
+                possibilities,
+                "Female");
+		
+		String age = (String)JOptionPane.showInputDialog(frame, "Enter your age:", "Age",  JOptionPane.OK_OPTION); 
+		
+		if(gender == null || age == null) 
+			return false;
+		
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		
+		int ageNumber = Integer.parseInt(age);
+		
+		if(ageNumber < 15 || ageNumber > 125) {
+			JOptionPane.showMessageDialog(frame, "Sorry, your age disqualifies you as a participant in this test.");
+			return false;
+		}
+		
+		logger.SetEnvironment(gender.charAt(0), ageNumber, new Resolution(screenSize.width, screenSize.height));
+				
+		return true;
 	}
 	
 	void draw() {
@@ -134,6 +171,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 			        new Square(1033, 560, 100, Color.yellow, width, height, true),
 			        new Circle(550, 150, 50, Color.red, width, height, true)
 			};
+			
 			stationary = new Square(700, 300, 50, Color.red, width, height, false);
 			break;
 		
