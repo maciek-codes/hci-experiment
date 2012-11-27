@@ -32,22 +32,17 @@ public class Square extends Shapes {
 			return false;
 	}
 
-	@Override
-	public void move() {
-		// TODO Auto-generated method stub
-		if (!super.moving) return;
-	}
-
-	@Override
+	/*@Override
 	public void bounce() {
 		// TODO Auto-generated method stub
 		
-	}
+	}*/
 
 	@Override
-	public boolean isOutOfBounds(int width, int height) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isOutOfBounds(int width, int height){
+		if(x < 0 || x+s > width) return true;
+		else if(y < 0 || y+s > height) return true;
+		else return false;
 	}
 
 	@Override
