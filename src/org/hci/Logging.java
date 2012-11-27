@@ -3,10 +3,8 @@ package org.hci;
 import java.util.Date;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.File;
 
 //class for saving data from the program in the correct format
 public class Logging {
