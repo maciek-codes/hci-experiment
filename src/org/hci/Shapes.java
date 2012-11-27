@@ -2,13 +2,14 @@ package org.hci;
 
 import java.awt.*;
 import java.awt.event.MouseMotionListener;
+import java.util.Random;
 
 public abstract class Shapes implements MouseMotionListener {
-    int x;
-	int y;
+    int x, y, vx, vy;
 	int width, height;
 	boolean moving;
     Color c;
+	Random rand;
     
     public Shapes(int x,int y,Color c, int w, int h, boolean moving){
     	this.moving = moving;
@@ -17,13 +18,29 @@ public abstract class Shapes implements MouseMotionListener {
         this.x=x;
         this.y=y;
         this.c=c;
+        
+        rand = new Random();
+		vx = (int) (rand.nextDouble()*100)%10;
+		vy = (int) ((rand.nextDouble()*100)%10);
     }
     
     public abstract void draw(Graphics2D g);
     
-	public abstract void move();
+	public void move(){
+		if (!moving) return;
+		x += vx;
+		y += vy;
+		if(rand.nextDouble() < 0.01){
+			vx = (int) ((rand.nextDouble()*100)*(rand.nextDouble()<0.5 ? -1:1)%10);
+			vy = (int) ((rand.nextDouble()*100)*(rand.nextDouble()<0.5 ? -1:1)%10);
+		}
+		if (isOutOfBounds(width, height)) bounce();
+	}
 	
-	public abstract void bounce();
+	public void bounce(){
+		vx = vx * -1;
+		vy = vy * -1;
+	}
 	
 	public abstract boolean isOutOfBounds(int width, int height);
     

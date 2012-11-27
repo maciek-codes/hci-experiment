@@ -1,16 +1,28 @@
 package org.hci;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.Ellipse2D;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.*;
-import javax.swing.*;
-import java.awt.color.*;
+import java.util.Date;
 
-public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMotionListener {
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
+public class MainWindow extends JPanel implements Runnable, KeyListener, MouseListener, MouseMotionListener {
+	
 	private static final long serialVersionUID = 1L;
 
 	BufferedImage buffer;
@@ -25,57 +37,97 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 
 	Shapes[] shapeArray;
 
+	static Logging logger;
+	
+	JFrame frame;
+
 	int states;
 	/* 0 = launch screen
 	 * 1 = start screen
 	 * 2 = in-test screen
+	 * 3 = end of test screen
 	 */
-
+	
+	long timeToSee, timeToMove;
+	boolean firstMouseMove = false;
+	
 	public static void main(String[] args) {
-		JFrame frame = new JFrame("HCI - Group Floor 2pi");
+		
+		logger = Logging.GetLogger();
+		JFrame f = new JFrame("HCI - Group Floor 2pi");
 		MainWindow w;
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//frame.setUndecorated(true); //removes top bar with close buttons
-		frame.setLocationByPlatform(true);
-		frame.setResizable(false);
+		f.setLocationByPlatform(true);
+		f.setResizable(false);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		frame.setSize(screenSize);
+		f.setSize(screenSize);
 		width = screenSize.width;
 		height = screenSize.height;
 
 		//create shapes
 
-		w = new MainWindow(frame);
-
-		frame.setFocusable(true);
-
-		frame.add(w);
-
-		Logging logger = Logging.GetLogger();
-
-		logger.Log(1, 22, new Date(), new Date(), 'M', 21, new Resolution(screenSize.width, screenSize.height), 10, 2, 1.5, 1.5);
-
-		logger.Close();
-
+		w = new MainWindow(f);
+		
+		f.setFocusable(true);
+		
+		f.add(w);
+		
 		//frame.pack();
-		frame.setVisible(true);
+		f.setVisible(true);
 		SwingUtilities.invokeLater(w);
 		w.mainLoop();
 	}
 
 	public MainWindow(JFrame f) {
+		this.frame = f;
 		this.setBackground(Color.black);
-		f.addKeyListener(this);
-		f.addMouseMotionListener(this);
-
-		f.addMouseMotionListener(stationary);
+		this.frame.addKeyListener(this);
+		this.frame.addMouseListener(this);
+		this.frame.addMouseMotionListener(this);
+		this.frame.addMouseMotionListener(stationary);
 	}
 
 	public void run(){}
 
 	void mainLoop() {
-		while (true)
-			draw();
+		
+		if(setUp()) {
+			while (true)
+				draw();
+		}
+	}
+	
+	boolean setUp() {
+		
+		Object[] possibilities = {"Female", "Male"};
+		
+		String gender = (String)JOptionPane.showInputDialog(
+                frame,
+                "Choose your gender:\n",
+                "Gender",
+                JOptionPane.OK_OPTION,
+                null,
+                possibilities,
+                "Female");
+		
+		String age = (String)JOptionPane.showInputDialog(frame, "Enter your age:", "Age",  JOptionPane.OK_OPTION); 
+		
+		if(gender == null || age == null) 
+			return false;
+		
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		
+		int ageNumber = Integer.parseInt(age);
+		
+		if(ageNumber < 15 || ageNumber > 125) {
+			JOptionPane.showMessageDialog(frame, "Sorry, your age disqualifies you as a participant in this test.");
+			return false;
+		}
+		
+		logger.SetEnvironment(gender.charAt(0), ageNumber, new Resolution(screenSize.width, screenSize.height));
+				
+		return true;
 	}
 
 	void draw() {
@@ -95,10 +147,11 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 				break;
 			case 3:
 				b = drawEndScreen(b);
+				logger.Close();
 				break;
 		}
 		g.drawImage(buffer, 0, 0, this);
-		Toolkit.getDefaultToolkit().sync();
+		Toolkit.getDefaultToolkit().sync();		
 		b.dispose();
 		g.dispose();
 	}
@@ -122,7 +175,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 			break;
 		case 2:
 			shapeArray = new Shapes[]{
-			        new Square((int)((966/1000.0)*width), (int)((135/1000.0)*height), 100, Color.blue, width, height, true),
+			        new Square((int)((654/1000.0)*width), (int)((135/1000.0)*height), 100, Color.blue, width, height, true),
 			        new Circle((int)((495/1000.0)*width), (int)((651/1000.0)*height), 50, Color.white, width, height, true),
 			        new Circle((int)((542/1000.0)*width), (int)((294/1000.0)*height), 50, Color.yellow, width, height, true),
 			        new Square((int)((907/1000.0)*width), (int)((368/1000.0)*height), 100, Color.white, width, height, true),
@@ -154,17 +207,17 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 			shapeArray = new Shapes[]{
 			        new Square((int)((916/1000.0)*width), (int)((812/1000.0)*height), 61, Color.white, width, height, true),
 			        new EQTriangle((int)((600/1000.0)*width), (int)((327/1000.0)*height), 84, Color.green, width, height, true),
-			        new Circle((int)((996/1000.0)*width),(int)((34/1000.0)*height), 98, Color.red, width, height, true),
+			        new Circle((int)((500/1000.0)*width),(int)((500/1000.0)*height), 98, Color.red, width, height, true),
 			        new Square((int)((374/1000.0)*width), (int)((781/1000.0)*height), 67, Color.white, width, height, true),
 			        new EQTriangle((int)((688/1000.0)*width), (int)((400/1000.0)*height), 96, Color.blue, width, height, true),
 			        new Square((int)((941/1000.0)*width), (int)((320/1000.0)*height), 82, Color.pink, width, height, true),
-			        new Circle((int)((295/1000.0)*width), (int)((942/1000.0)*height), 76, Color.pink, width, height, true),
+			        new Circle((int)((295/1000.0)*width), (int)((546/1000.0)*height), 76, Color.pink, width, height, true),
 			        new Square((int)((332/1000.0)*width), (int)((719/1000.0)*height), 97, Color.blue, width, height, true),
 			        new EQTriangle((int)((382/1000.0)*width), (int)((134/1000.0)*height), 87, Color.blue, width, height, true),
 			        new Square((int)((394/1000.0)*width), (int)((620/1000.0)*height), 55, Color.white, width, height, true),
 			        new EQTriangle((int)((482/1000.0)*width), (int)((13/1000.0)*height), 94, Color.blue, width, height, true),
 			        new Square((int)((102/1000.0)*width),(int)((61/1000.0)*height), 74, Color.pink, width, height, true),
-			        new Circle((int)((997/1000.0)*width), (int)((483/1000.0)*height), 78, Color.pink, width, height, true),
+			        new Circle((int)((849/1000.0)*width), (int)((588/1000.0)*height), 78, Color.pink, width, height, true),
 			        new Square((int)((297/1000.0)*width), (int)((982/1000.0)*height), 73, Color.white, width, height, true),
 			        new EQTriangle((int)((672/1000.0)*width), (int)((340/1000.0)*height), 79, Color.blue, width, height, true)
 			};
@@ -228,8 +281,8 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 		b.setColor(Color.WHITE);
 		b.setFont(new Font(Font.SERIF, Font.PLAIN, 72));
 		b.drawString("Instructions", centreAlignString("Instructions", b), 100);
-		b.drawString("During this, move the mouse", centreAlignString("During this, move the mouse", b), 300);
-		b.drawString("to the center circle to start.", centreAlignString("to the center circle to start.", b), 400);
+		b.drawString("During this, move the mouse to the", centreAlignString("During this, move the mouse to the", b), 300);
+		b.drawString("center circle and click to start.", centreAlignString("center circle and click to start.", b), 400);
 		b.setFont(new Font(Font.SERIF, Font.PLAIN, 60));
 		b.drawString("Press space key to begin.", centreAlignString("Press space key to begin.", b), 600);
 		return b;
@@ -242,7 +295,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 		//TODO get shape colour and type function calls
 		//shape for first Test
 		stationary = new Square(550, 150, 50, Color.red, width, height, false);
-		txt = "Go to "+"red"+" "+stationary.getShapeType();
+		txt = "Go to the "+"red"+" "+stationary.getShapeType();
 		b.setFont(new Font(Font.SERIF, Font.PLAIN, 72));
 		b.drawString(txt, centreAlignString(txt, b), 100);
 		//draw circle in centre of screen
@@ -287,22 +340,31 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
+		if(!firstMouseMove){
+			long t = System.nanoTime();
+			//timeToSee = (long) (t*(long)Math.pow(10, -9)) - (timeToSee*(long)Math.pow(10, -9));
+			timeToSee = t - timeToSee;
+			timeToMove = t;
+			firstMouseMove = true;
+		}
+		
 		int x=0, y=0;
 		try {
 			x=e.getX();
 			y=e.getY();
 			//check if mouse is in the centre start circle
-			if (states==1 && start_circle.contains(new Point(x, y-23))) {
-				System.out.println("Mouse in circle... ready to start.");
-				startTest();
-				states = 2;
-			}
+			
 			if (states==2 && stationary.contains(new Point(x, y-23))) {
+				long t = System.nanoTime();
+				timeToMove = t - timeToMove;
+				firstMouseMove = false;
 				System.out.println("On target...");
 				states = 1;
 				testNo++;
 				if (testNo > numTests)
 					states = 3;
+				System.out.println("time to see: "+timeToSee+ " ttm: " + timeToMove);
+				logger.Log(testNo-1, new Date(), new Date(), shapeArray.length, shapeArray[1].moving, timeToSee, timeToMove);
 			}
 		} catch (NullPointerException n) {}
 	}
@@ -316,4 +378,39 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 	@Override
 	public void keyTyped(KeyEvent e) {}
 
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		if (states==1 && start_circle.contains(new Point(arg0.getX(), arg0.getY()-23))) {
+			System.out.println("Mouse in circle... ready to start.");
+			startTest();
+			states = 2;
+			timeToSee = System.nanoTime();
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }
+
