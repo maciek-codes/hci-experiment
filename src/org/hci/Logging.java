@@ -104,7 +104,7 @@ public class Logging {
 	}
 	
 	//key,user_id,test_id,datetime_start,datetime_finish,gender,age,resolution,no_objects,object_velocity,time_visual,time_pointing
-	public void Log(int testId, Date start, Date finish, int noObjects, int velocity, double timeVisual, double timePointing) {
+	public void Log(int testId, Date start, Date finish, int noObjects, boolean moving, double timeVisual, double timePointing) {
 		
 		
 		// Get date now and use it as a key
@@ -122,7 +122,7 @@ public class Logging {
 		values[6] = String.valueOf(age);
 		values[7] = screenRes.toString();
 		values[8] = String.valueOf(noObjects);
-		values[9] = String.valueOf(velocity);
+		values[9] = String.valueOf(moving);
 		values[10] = String.valueOf(timeVisual);
 		values[11] = String.valueOf(timePointing);
 		

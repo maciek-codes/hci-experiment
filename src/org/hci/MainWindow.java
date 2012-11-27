@@ -1,15 +1,26 @@
 package org.hci;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.util.*;
-import javax.swing.*;
-import java.awt.color.*;
+import java.util.Date;
+import java.awt.geom.Rectangle2D;
 
-public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMotionListener {
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+public class MainWindow extends JPanel implements Runnable, KeyListener, MouseListener, MouseMotionListener {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -31,6 +42,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 	/* 0 = launch screen
 	 * 1 = start screen
 	 * 2 = in-test screen
+	 * 3 = end of test screen
 	 */
 	
 	long timeToSee, timeToMove;
@@ -71,6 +83,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 		this.setBackground(Color.black);
 		f.addKeyListener(this);
 		f.addMouseMotionListener(this);
+		f.addMouseListener(this);
 
 		f.addMouseMotionListener(stationary);
 	}
@@ -103,8 +116,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 				break;
 		}
 		g.drawImage(buffer, 0, 0, this);
-		Toolkit.getDefaultToolkit().sync();
-		if(states == 2) timeToSee = System.nanoTime();
+		Toolkit.getDefaultToolkit().sync();		
 		b.dispose();
 		g.dispose();
 	}
@@ -211,6 +223,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 	public void mouseMoved(MouseEvent e) {
 		if(!firstMouseMove){
 			long t = System.nanoTime();
+			//timeToSee = (long) (t*(long)Math.pow(10, -9)) - (timeToSee*(long)Math.pow(10, -9));
 			timeToSee = t - timeToSee;
 			timeToMove = t;
 			firstMouseMove = true;
@@ -221,11 +234,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 			x=e.getX();
 			y=e.getY();
 			//check if mouse is in the centre start circle
-			if (states==1 && start_circle.contains(new Point(x, y-23))) {
-				System.out.println("Mouse in circle... ready to start.");
-				startTest();
-				states = 2;
-			}
+			
 			if (states==2 && stationary.contains(new Point(x, y-23))) {
 				long t = System.nanoTime();
 				timeToMove = t - timeToMove;
@@ -235,8 +244,8 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 				testNo++;
 				if (testNo > numTests)
 					states = 3;
-				
-				logger.Log(testNo-1, new Date(), new Date(), 10, 2, 1.5, 1.5);
+				System.out.println("time to see: "+timeToSee+ " ttm: " + timeToMove);
+				logger.Log(testNo-1, new Date(), new Date(), shapeArray.length, shapeArray[1].moving, timeToSee, timeToMove);
 			}
 		} catch (NullPointerException n) {}
 	}
@@ -249,5 +258,39 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 
 	@Override
 	public void keyTyped(KeyEvent e) {}
+
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		if (states==1 && start_circle.contains(new Point(arg0.getX(), arg0.getY()-23))) {
+			System.out.println("Mouse in circle... ready to start.");
+			startTest();
+			states = 2;
+			timeToSee = System.nanoTime();
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }
