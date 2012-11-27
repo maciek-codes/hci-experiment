@@ -1,3 +1,0 @@
-key,user_id,test_id,datetime_start,datetime_finish,gender,age,resolution,no_objects,object_velocity,time_visual,time_pointing
-1353942630143,1,22,Mon Nov 26 15:10:30 GMT 2012,Mon Nov 26 15:10:30 GMT 2012,M,21,1000x2000,10,2,1.5,1.5
-1353942640823,1,22,Mon Nov 26 15:10:40 GMT 2012,Mon Nov 26 15:10:40 GMT 2012,M,21,1000x2000,10,2,1.5,1.5

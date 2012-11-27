@@ -17,7 +17,13 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 	static int width;
 	static int height;
 	
-	Shape start_circle;
+	int testNo = 1, numTests=2;
+	
+	Circle start_circle;
+	
+	Square stationary;
+	
+	Shapes[] shapeArray;
 	
 	int states;
 	/* 0 = launch screen
@@ -27,7 +33,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 	
 	public static void main(String[] args) {
 		JFrame frame = new JFrame("HCI - Group Floor 2pi");
-		MainWindow w = new MainWindow(frame);
+		MainWindow w;
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//frame.setUndecorated(true); //removes top bar with close buttons
 		frame.setLocationByPlatform(true);
@@ -36,6 +42,10 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 		frame.setSize(screenSize);
 		width = screenSize.width;
 		height = screenSize.height;
+		
+		//create shapes
+		
+		w = new MainWindow(frame);
 		
 		frame.setFocusable(true);
 		
@@ -57,6 +67,8 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 		this.setBackground(Color.black);
 		f.addKeyListener(this);
 		f.addMouseMotionListener(this);
+
+		f.addMouseMotionListener(stationary);
 	}
 	
 	public void run(){}
@@ -81,11 +93,49 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 			case 2:
 				b = drawExperiment(b);
 				break;
+			case 3:
+				b = drawEndScreen(b);
+				break;
 		}
 		g.drawImage(buffer, 0, 0, this);
 		Toolkit.getDefaultToolkit().sync();
 		b.dispose();
 		g.dispose();
+	}
+	
+	void startTest() {
+		switch (testNo) {
+		case 1:
+			shapeArray = new Shapes[]{
+			        new Circle(350, 300, 100, Color.blue, width, height, false),
+			        new Circle(550, 500, 50, Color.white, width, height, false),
+			        new Circle(850, 700, 50, Color.yellow, width, height, false),
+			        new Circle(250, 620, 100, Color.white, width, height, false),
+			        new Circle(400, 400, 80, Color.red, width, height, false),
+			        new Circle(933, 320, 100, Color.green, width, height, false),
+			        new Circle(150, 350, 69, Color.green, width, height, false),
+			        new Circle(1033, 560, 100, Color.yellow, width, height, false),
+			        new Circle(755, 150, 50, Color.red, width, height, false),
+			        new Square(234, 180, 50, Color.blue, width, height, false),
+			        new EQTriangle(1000, 456, 50, Color.green, width, height, false)
+			};
+			break;
+		case 2:
+			shapeArray = new Shapes[]{
+			        new Square(350, 300, 100, Color.blue, width, height, true),
+			        new Circle(550, 500, 50, Color.white, width, height, true),
+			        new Circle(850, 700, 50, Color.yellow, width, height, true),
+			        new Square(250, 620, 100, Color.white, width, height, true),
+			        new Circle(333, 400, 80, Color.red, width, height, true),
+			        new Square(933, 320, 100, Color.green, width, height, true),
+			        new Circle(150, 350, 69, Color.green, width, height, true),
+			        new Square(1033, 560, 100, Color.yellow, width, height, true),
+			        new Circle(550, 150, 50, Color.red, width, height, true)
+			};
+			stationary = new Square(700, 300, 50, Color.red, width, height, false);
+			break;
+		
+		}
 	}
 	
 	Graphics2D drawLaunchScreen(Graphics2D b) {
@@ -104,18 +154,32 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 		b.setColor(Color.WHITE);
 		b.fillRect(0, 150, width, 15);
 		//TODO get shape colour and type function calls
-		//txt = "Click "+shapeColour+" "+shapeType;
-		txt = "Click "+"red"+" "+"square";
+		//shape for first Test
+		stationary = new Square(550, 150, 50, Color.red, width, height, false);
+		txt = "Go to "+"red"+" "+stationary.getShapeType();
 		b.setFont(new Font(Font.SERIF, Font.PLAIN, 72));
 		b.drawString(txt, centreAlignString(txt, b), 100);
 		//draw circle in centre of screen
-		int radius=50;
-		start_circle = new Ellipse2D.Double((width/2)-(radius/2), (height/2)-(radius/2), radius, radius);
-		b.fill(start_circle);
+		start_circle = new Circle((width/2), (height/2), 20, Color.WHITE, width, height, false);
+		start_circle.draw(b);
 		return b;
 	}
 	
 	Graphics2D drawExperiment(Graphics2D b) {
+		for (Shapes s : shapeArray) {
+			s.draw(b);
+			s.move();
+		}
+		stationary.draw(b);
+		stationary.move();
+		return b;
+	}
+	
+	Graphics2D drawEndScreen(Graphics2D b) {
+		b.setColor(Color.WHITE);
+		b.setFont(new Font(Font.SERIF, Font.PLAIN, 72));
+		b.drawString("End of experiment", centreAlignString("End of experiment", b), 100);
+		b.drawString("Thanks for completing", centreAlignString("Thanks for completing", b), 400);
 		return b;
 	}
 	
@@ -141,13 +205,20 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 		try {
 			x=e.getX();
 			y=e.getY();
+			//check if mouse is in the centre start circle
+			if (states==1 && start_circle.contains(new Point(x, y-23))) {
+				System.out.println("Mouse in circle... ready to start.");
+				startTest();
+				states = 2;
+			}
+			if (states==2 && stationary.contains(new Point(x, y-23))) {
+				System.out.println("On target...");
+				states = 1;
+				testNo++;
+				if (testNo > numTests)
+					states = 3;
+			}
 		} catch (NullPointerException n) {}
-			
-		//check if mouse is in the centre start circle
-		if (states==1 && start_circle.contains(x, y-20)) {
-			System.out.println("Mouse in circle... ready to start.");
-			states = 2;
-		}
 	}
 
 	@Override
