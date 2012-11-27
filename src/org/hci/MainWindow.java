@@ -53,7 +53,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 		
 		Logging logger = Logging.GetLogger();
 		
-		logger.Log(1, 22, new Date(), new Date(), 'M', 21, new Resolution(screenSize.width, screenSize.height), 10, 2, 1.5, 1.5);
+		logger.Log(1, new Date(), new Date(), 'M', 21, new Resolution(screenSize.width, screenSize.height), 10, 2, 1.5, 1.5);
 		
 		logger.Close();
 		
