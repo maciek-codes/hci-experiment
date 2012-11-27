@@ -43,7 +43,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 		
 		Logging logger = Logging.GetLogger();
 		
-		logger.Log(1, 22, new Date(), new Date(), 'M', 21, new Resolution("1000x2000"), 10, 2, 1.5, 1.5);
+		logger.Log(1, 22, new Date(), new Date(), 'M', 21, new Resolution(screenSize.width, screenSize.height), 10, 2, 1.5, 1.5);
 		
 		logger.Close();
 		
@@ -70,7 +70,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 		buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		Graphics2D b = buffer.createGraphics();
 		Graphics2D g = (Graphics2D) this.getGraphics();
-<<<<<<< HEAD
+
 		switch (states) {
 			case 0:
 				b = drawLaunchScreen(b);
@@ -155,21 +155,6 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 
 	@Override
 	public void keyReleased(KeyEvent e) {}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {}
-
-	@Override
-	public void mousePressed(MouseEvent e) {}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {}
-
-	@Override
-	public void mouseExited(MouseEvent e) {}
 
 	@Override
 	public void keyTyped(KeyEvent e) {}
