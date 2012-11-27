@@ -29,6 +29,12 @@ public class Logging {
 	BufferedWriter out;
 	
 	int userId;
+
+	private char gender;
+
+	private int age;
+
+	private Resolution screenRes;
 	
 	// Private constructor prevents others from initialising
 	private Logging() {
@@ -98,16 +104,13 @@ public class Logging {
 	}
 	
 	//key,user_id,test_id,datetime_start,datetime_finish,gender,age,resolution,no_objects,object_velocity,time_visual,time_pointing
-	public void Log(int testId, Date start, Date finish, char gender, int age, 
-			Resolution res, int noObjects, int velocity, double timeVisual, double timePointing ) {
+	public void Log(int testId, Date start, Date finish, int noObjects, int velocity, double timeVisual, double timePointing) {
 		
 		
 		// Get date now and use it as a key
 		Date dateNow = new Date();
 		long key = dateNow.getTime();
 
-		
-		
 		String[] values = new String[noOfFields];
 		
 		values[0] = String.valueOf(key);
@@ -117,7 +120,7 @@ public class Logging {
 		values[4] = finish.toString();
 		values[5] = String.valueOf(gender);
 		values[6] = String.valueOf(age);
-		values[7] = res.toString();
+		values[7] = screenRes.toString();
 		values[8] = String.valueOf(noObjects);
 		values[9] = String.valueOf(velocity);
 		values[10] = String.valueOf(timeVisual);
@@ -185,6 +188,13 @@ public class Logging {
 		{
 			  System.err.println("Error: " + e.getMessage());
 		}
+	}
+
+	public void SetEnvironment(char c, int i, Resolution resolution) {
+		this.gender = c;
+		this.age = i;
+		this.screenRes = resolution;
+		
 	}
 
 }
