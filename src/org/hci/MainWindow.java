@@ -305,6 +305,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 			startTest();
 			states = 2;
 			timeToSee = System.nanoTime();
+			firstMouseMove = false;
 		}
 	}
 

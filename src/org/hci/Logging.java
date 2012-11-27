@@ -153,15 +153,16 @@ public class Logging {
 				
 				if(line == null) {
 					userId = 0;
-				}
+				} else {
 				
-				String[] fields = line.split(",");
-				
-				try {
-					int currentUser = Integer.parseInt(fields[1]);
-					userId = currentUser + 1;
-				} catch(Exception ex) {
-					userId = 0;
+					String[] fields = line.split(",");
+					
+					try {
+						int currentUser = Integer.parseInt(fields[1]);
+						userId = currentUser + 1;
+					} catch(Exception ex) {
+						userId = 0;
+					}
 				}
 				
 				fis.close();
