@@ -4,20 +4,14 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-import java.util.Random;
 
 public class Circle extends Shapes {
 	
 	private int r;
-	private int vx, vy;
-	private Random rand;
 	
 	public Circle(int x, int y, int r, Color c, int w, int h, boolean moving){
 		super(x, y, c, w, h, moving);
-		this.r = r;
-		rand = new Random();
-		vx = (int) (rand.nextDouble()*100)%10;
-		vy = (int) ((rand.nextDouble()*100)%10);
+		this.r = r;		
 	}
 	
 	@Override
@@ -26,7 +20,7 @@ public class Circle extends Shapes {
 		g.fillOval(x-r, y-r, r+r, r+r);
 	}
 	
-	@Override
+	/*@Override
 	public void move(){
 		if (!super.moving) return;
 		x += vx;
@@ -37,13 +31,13 @@ public class Circle extends Shapes {
 		}
 		if (isOutOfBounds(width, height))
 			bounce();
-	}
+	}*/
 	
-	@Override
+	/*@Override
 	public void bounce(){
 		vx = vx * -1;
 		vy = vy * -1;
-	}
+	}*/
 	
 	@Override
 	public boolean isOutOfBounds(int width, int height){

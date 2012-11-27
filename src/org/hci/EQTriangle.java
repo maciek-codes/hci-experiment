@@ -30,22 +30,22 @@ public class EQTriangle extends Shapes {
 	@Override
 	public boolean contains(Point point) {return false;}
 
-	@Override
+	/*@Override
 	public void move() {
-		// TODO Auto-generated method stub
 		if (!super.moving) return;
 	}
 
 	@Override
 	public void bounce() {
-		// TODO Auto-generated method stub
+
 		
-	}
+	}*/
 
 	@Override
-	public boolean isOutOfBounds(int width, int height) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isOutOfBounds(int width, int height){
+		if(x-(l/2) < 0 || x+(l/2) > width) return true;
+		else if(y < 0 || y+l > height) return true;
+		else return false;
 	}
 
 	@Override

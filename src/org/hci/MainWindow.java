@@ -31,6 +31,9 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 	 * 2 = in-test screen
 	 */
 	
+	long timeToSee, timeToMove;
+	boolean firstMouseMove = false;
+	
 	public static void main(String[] args) {
 		JFrame frame = new JFrame("HCI - Group Floor 2pi");
 		MainWindow w;
@@ -99,6 +102,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 		}
 		g.drawImage(buffer, 0, 0, this);
 		Toolkit.getDefaultToolkit().sync();
+		if(states == 2) timeToSee = System.nanoTime();
 		b.dispose();
 		g.dispose();
 	}
@@ -130,7 +134,9 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 			        new Square(933, 320, 100, Color.green, width, height, true),
 			        new Circle(150, 350, 69, Color.green, width, height, true),
 			        new Square(1033, 560, 100, Color.yellow, width, height, true),
-			        new Circle(550, 150, 50, Color.red, width, height, true)
+			        new Circle(550, 150, 50, Color.red, width, height, true),
+			        new EQTriangle(1000, 456, 500, Color.blue, width, height, true),
+			        new EQTriangle(1000, 456, 500, Color.red, width, height, true)
 			};
 			stationary = new Square(700, 300, 50, Color.red, width, height, false);
 			break;
@@ -201,6 +207,13 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 	
 	@Override
 	public void mouseMoved(MouseEvent e) {
+		if(!firstMouseMove){
+			long t = System.nanoTime();
+			timeToSee = t - timeToSee;
+			timeToMove = t;
+			firstMouseMove = true;
+		}
+		
 		int x=0, y=0;
 		try {
 			x=e.getX();
@@ -212,6 +225,9 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseMo
 				states = 2;
 			}
 			if (states==2 && stationary.contains(new Point(x, y-23))) {
+				long t = System.nanoTime();
+				timeToMove = t - timeToMove;
+				firstMouseMove = false;
 				System.out.println("On target...");
 				states = 1;
 				testNo++;
