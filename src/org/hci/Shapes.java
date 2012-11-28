@@ -20,7 +20,7 @@ public abstract class Shapes implements MouseMotionListener {
         this.c=c;
         
         rand = new Random();
-		vx = (int) (rand.nextDouble()*100)%10;
+		vx = (int) ((rand.nextDouble()*100)%10);
 		vy = (int) ((rand.nextDouble()*100)%10);
     }
     
@@ -49,10 +49,21 @@ public abstract class Shapes implements MouseMotionListener {
         this.y=y;
     }
     
+    /*public String getColour() {
+    	String result = "";
+    	if (c==Color.WHITE) return "White";
+    	if (c==Color.RED) return "Red";
+    	if (c==Color.BLUE) return "Blue";
+    	if (c==Color.GREEN) return "Green";
+    	if (c==Color.YELLOW) return "Yellow";
+    	if (c==Color.GRAY) return "Gray";
+    	if (c==Color.PINK) return "Pink";
+    	return "nocolour";
+    }*/
+    
     public abstract String getShapeType();
 
 	public abstract boolean contains(Point point);
-		// TODO Auto-generated method stub
 	
 	
 

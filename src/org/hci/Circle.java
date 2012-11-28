@@ -17,7 +17,7 @@ public class Circle extends Shapes {
 	@Override
 	public void draw(Graphics2D g){
 		g.setColor(c);
-		g.fillOval(x-r, y-r, r+r, r+r);
+		g.fillOval(x, y, r+r, r+r);
 	}
 	
 	/*@Override
@@ -41,19 +41,28 @@ public class Circle extends Shapes {
 	
 	@Override
 	public boolean isOutOfBounds(int width, int height){
-		if(x-r < 0 || x+r > width) return true;
+		if(x < 0 || x+r+r > width) return true;
 		else if(y < 0 || y+r+r > height) return true;
 		else return false;
 	}
 
 	@Override
 	public boolean contains(Point point) {
-		int dx = Math.abs(point.x-x);
-		int dy = Math.abs(point.y-y);
-		int R = r;
-		if ((dx^2) + (dy^2) <= (R^2))
+		if (point.x<=x+r+r && point.x>=x && point.y<=y+r+r && point.y>=y)
 			return true;
-		return false;
+		else 
+			return false;
+		/*int centre_x=x+r, centre_y=y+r;
+		int dx = Math.abs(point.x-centre_x);
+		int dy = Math.abs(point.y-centre_y);
+		double d = Math.sqrt((dx^2) + (dy^2));
+		 if (d <= r) {
+			System.out.println("point x: "+point.x+" centre x: "+centre_x);
+			System.out.println("point y: "+point.y+" centre y: "+centre_y);
+			System.out.println(d);
+			return true;
+		}
+		return false;*/
 	}
 
 	@Override

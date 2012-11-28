@@ -93,12 +93,17 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 	void mainLoop() {
 		
 		if(setUp()) {
+			int r = 10;
+			start_circle = new Circle((width/2)-r, (height/2)-r, r, Color.WHITE, width, height, false);
 			while (true)
 				draw();
 		}
 	}
 	
 	boolean setUp() {
+		
+		//shape for first Test
+		stationary = new Square(537, 150, 60, Color.red, width, height, false);
 		
 		Object[] possibilities = {"Female", "Male"};
 		
@@ -185,7 +190,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 			        new Square((int)((819/1000.0)*width), (int)((461/1000.0)*height), 100, Color.yellow, width, height, true),
 			        new Circle((int)((396/1000.0)*width), (int)((746/1000.0)*height), 50, Color.red, width, height, true)
 			};
-			stationary = new Square(422, 835, 50, Color.red, width, height, false);
+			stationary = new Square(420, 835, 60, Color.red, width, height, false);
 			break;
 		case 3:
 			shapeArray = new Shapes[]{
@@ -201,7 +206,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 			        new Square((int)((234/1000.0)*width), (int)((180/1000.0)*height), 50, Color.gray, width, height, false),
 			        new EQTriangle((int)((1000/1000.0)*width), (int)((456/1000.0)*height), 50, Color.yellow, width, height, false)
 			};
-			stationary = new Square(600, 389, 50, Color.red, width, height, false);
+			stationary = new Square(1310, 95, 60, Color.red, width, height, false);
 			break;
 		case 4:
 			shapeArray = new Shapes[]{
@@ -221,7 +226,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 			        new Square((int)((297/1000.0)*width), (int)((982/1000.0)*height), 73, Color.white, width, height, true),
 			        new EQTriangle((int)((672/1000.0)*width), (int)((340/1000.0)*height), 79, Color.blue, width, height, true)
 			};
-			stationary = new Square(573, 546, 50, Color.red, width, height, false);
+			stationary = new Square(390, 555, 60, Color.red, width, height, false);
 			break;
 		case 5:
 			shapeArray = new Shapes[]{
@@ -248,7 +253,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 			        new Square((int)((596/1000.0)*width), (int)((857/1000.0)*height), 50, Color.gray, width, height, false),
 			        new Circle((int)((444/1000.0)*width), (int)((655/1000.0)*height), 50, Color.yellow, width, height, false)
 			};
-			stationary = new Square(377, 654, 50, Color.red, width, height, false);
+			stationary = new Square(1367, 930, 60, Color.red, width, height, false);
 			break;
 		case 6:
 			shapeArray = new Shapes[]{
@@ -271,7 +276,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 			        new Circle((int)((109/1000.0)*width), (int)((18/1000.0)*height), 100, Color.green, width, height, true),
 			        new Square((int)((714/1000.0)*width), (int)((162/1000.0)*height), 50, Color.white, width, height, true)
 			};
-			stationary = new Square(219, 765, 50, Color.red, width, height, false);
+			stationary = new Square(1268, 65, 50, Color.red, width, height, false);
 			break;
 
 		}
@@ -281,25 +286,28 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 		b.setColor(Color.WHITE);
 		b.setFont(new Font(Font.SERIF, Font.PLAIN, 72));
 		b.drawString("Instructions", centreAlignString("Instructions", b), 100);
-		b.drawString("During this, move the mouse to the", centreAlignString("During this, move the mouse to the", b), 300);
-		b.drawString("center circle and click to start.", centreAlignString("center circle and click to start.", b), 400);
+		String toptxt = "During the experiment, move the mouse";
+		b.drawString(toptxt, centreAlignString(toptxt, b), 300);
+		String bottomtxt = "to the shape specified";
+		b.drawString(bottomtxt, centreAlignString(bottomtxt, b), 400);
 		b.setFont(new Font(Font.SERIF, Font.PLAIN, 60));
 		b.drawString("Press space key to begin.", centreAlignString("Press space key to begin.", b), 600);
 		return b;
 	}
 
 	Graphics2D drawStartScreen(Graphics2D b) {
-		String txt;
+		String txt, moreinfo;
 		b.setColor(Color.WHITE);
 		b.fillRect(0, 150, width, 15);
 		//TODO get shape colour and type function calls
-		//shape for first Test
-		stationary = new Square(550, 150, 50, Color.red, width, height, false);
-		txt = "Go to the "+"red"+" "+stationary.getShapeType();
+		txt = "Move the mouse to the "+"Red"+" "+stationary.getShapeType();
 		b.setFont(new Font(Font.SERIF, Font.PLAIN, 72));
 		b.drawString(txt, centreAlignString(txt, b), 100);
+		moreinfo = "When ready, click the circle below to start";
+		b.setFont(new Font(Font.SERIF, Font.PLAIN, 50));
+		b.drawString(moreinfo, centreAlignString(moreinfo, b), 250);
 		//draw circle in centre of screen
-		start_circle = new Circle((width/2), (height/2), 20, Color.WHITE, width, height, false);
+;
 		start_circle.draw(b);
 		return b;
 	}
@@ -380,7 +388,7 @@ public class MainWindow extends JPanel implements Runnable, KeyListener, MouseLi
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		if (states==1 && start_circle.contains(new Point(arg0.getX(), arg0.getY()-23))) {
+		if (states==1 && start_circle.contains(new Point(arg0.getX()-3, arg0.getY()-27))) { // 8 33
 			System.out.println("Mouse in circle... ready to start.");
 			startTest();
 			states = 2;
