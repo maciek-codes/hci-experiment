@@ -1,0 +1,10 @@
+.metadata/
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Don't sumbit test results
+*.csv
